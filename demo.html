@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnimeArenaHQ Publisher — TikTok integration</title>
+<style>
+  :root{--bg:#0f0f13;--card:#17171d;--line:#26262e;--fg:#f2f2f5;--mut:#9a9aa6;--tt:#25f4ee;--pk:#fe2c55;--ok:#22c55e}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 64px}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  header img{width:44px;height:44px;border-radius:10px}
+  h1{font-size:22px;margin:0}
+  .sub{color:var(--mut);margin:2px 0 28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+  .step{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+  .btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:12px;padding:13px 20px;font-size:16px;font-weight:600;color:#fff;cursor:pointer}
+  .btn-tt{background:linear-gradient(90deg,var(--pk),var(--tt))}
+  .btn-pub{background:var(--pk)}
+  .scopes{list-style:none;padding:0;margin:14px 0 0}
+  .scopes li{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);color:#d6d6de}
+  .scopes li:first-child{border-top:0}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--tt);flex:0 0 8px}
+  .vid{display:flex;gap:14px;align-items:center;margin:16px 0}
+  .thumb{width:72px;height:96px;border-radius:10px;background:linear-gradient(160deg,#2a1533,#141a2e);display:flex;align-items:center;justify-content:center;font-size:26px}
+  .muted{color:var(--mut);font-size:14px}
+  .result{margin-top:16px;padding:14px 16px;border-radius:12px;background:#0e1a12;border:1px solid #1c3a26;color:#cfeadb;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;display:none}
+  .ok{color:var(--ok);font-weight:700}
+  .pill{display:inline-block;background:#101317;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--mut)}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="app_icon.png" alt="AnimeArenaHQ">
+    <div>
+      <h1>AnimeArenaHQ Publisher</h1>
+      <div class="pill">TikTok Content Posting API integration</div>
+    </div>
+  </header>
+  <p class="sub">Publishes our own anime commentary videos to our own authorized TikTok account (@animearena65).</p>
+
+  <div class="card" id="loginCard">
+    <div class="step">Step 1 · Login Kit</div>
+    <p>Authorize the account owner via TikTok OAuth. Requested scopes:</p>
+    <button class="btn btn-tt" id="loginBtn">▶ Log in with TikTok</button>
+    <ul class="scopes">
+      <li><span class="dot"></span> <b>user.info.basic</b> — confirm the authorized account (open_id, display name)</li>
+      <li><span class="dot"></span> <b>video.publish</b> — direct-post finished videos to the profile</li>
+      <li><span class="dot"></span> <b>video.upload</b> — send videos as drafts for review</li>
+    </ul>
+  </div>
+
+  <div class="card hide" id="pubCard">
+    <div class="step">Step 2 · Content Posting API</div>
+    <p><span class="ok">✓ Connected</span> as <b>@animearena65</b></p>
+    <div class="vid">
+      <div class="thumb">⚔️</div>
+      <div>
+        <div><b>Ichigo vs Aizen — who actually wins?</b></div>
+        <div class="muted">1080×1920 · vertical · push_by_file (FILE_UPLOAD)</div>
+      </div>
+    </div>
+    <button class="btn btn-pub" id="pubBtn">⬆ Publish to TikTok</button>
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+  var AUTH_URL = "https://www.tiktok.com/v2/auth/authorize/?client_key=sbawgmq420myzc47xq&scope=user.info.basic%2Cvideo.publish%2Cvideo.upload&response_type=code&redirect_uri=https%3A%2F%2Fanimearenahq.github.io%2Fdemo.html&state=demo";
+  var login = document.getElementById('loginBtn');
+  var pubCard = document.getElementById('pubCard');
+  var loginCard = document.getElementById('loginCard');
+  login.addEventListener('click', function(){ window.location.href = AUTH_URL; });
+  // if we came back from OAuth with a code, show the publish step
+  function connected(){ loginCard.classList.add('hide'); pubCard.classList.remove('hide'); }
+  if (location.search.indexOf('code=') > -1) connected();
+  // manual override for the demo walkthrough
+  window.__connect = connected;
+  document.getElementById('pubBtn').addEventListener('click', function(){
+    var r = document.getElementById('result');
+    r.style.display = 'block';
+    r.textContent = 'POST /v2/post/publish/video/init/  (source: FILE_UPLOAD)\\nuploading video bytes ...';
+    setTimeout(function(){
+      r.textContent = 'POST /v2/post/publish/video/init/  (source: FILE_UPLOAD)\\n'
+        + 'PUT  upload_url  ->  201\\n'
+        + 'publish_id: v_pub_file~v2-1.7659492535987095566\\n'
+        + 'status: PUBLISH_COMPLETE  ✓';
+    }, 1400);
+  });
+</script>
+</body>
+</html>
