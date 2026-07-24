@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnimeArenaHQ — anime matchup videos, published our way</title>
+<meta name="description" content="AnimeArenaHQ is a faceless anime commentary brand. Our first-party publisher posts our own 'who would win' videos to our own authorized TikTok account via the Content Posting API.">
+<style>
+  :root{
+    --bg:#0f0f13; --bg2:#0b0b0e; --card:#17171d; --line:#26262e; --line2:#2f2f39;
+    --fg:#f2f2f5; --mut:#9a9aa6; --mut2:#c9c9d2;
+    --tt:#25f4ee; --pk:#fe2c55; --ok:#22c55e;
+    --grad:linear-gradient(90deg,var(--pk),var(--tt));
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{color:var(--tt); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+
+  /* ambient depth, not flat slop */
+  .glow{position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(60% 40% at 78% -8%, rgba(37,244,238,.10), transparent 60%),
+      radial-gradient(55% 45% at 8% 0%, rgba(254,44,85,.10), transparent 55%);
+  }
+  main{position:relative; z-index:1}
+
+  /* header */
+  header{display:flex; align-items:center; justify-content:space-between; padding:22px 0}
+  .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.01em}
+  .brand img{width:38px; height:38px; border-radius:9px; display:block}
+  nav.top{display:flex; gap:22px; font-size:14px; color:var(--mut)}
+  nav.top a{color:var(--mut2)}
+  @media(max-width:560px){ nav.top{display:none} }
+
+  /* hero */
+  .hero{padding:56px 0 40px; max-width:720px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.10em;
+    text-transform:uppercase; color:var(--mut); border:1px solid var(--line2);
+    border-radius:999px; padding:6px 12px; background:rgba(255,255,255,.02)}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+  h1{font-size:clamp(34px,6.4vw,56px); line-height:1.04; letter-spacing:-.025em;
+    font-weight:800; margin:20px 0 0}
+  h1 .g{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,2.4vw,20px); color:var(--mut2); margin:20px 0 0; max-width:600px}
+  .cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:30px}
+  .btn{display:inline-flex; align-items:center; gap:10px; border:0; border-radius:12px;
+    padding:14px 22px; font-size:15px; font-weight:700; cursor:pointer;
+    transition:transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .18s ease, background .18s ease}
+  .btn-primary{color:#0b0b0e; background:var(--grad); box-shadow:0 8px 30px -10px rgba(37,244,238,.5)}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 40px -12px rgba(254,44,85,.55); text-decoration:none}
+  .btn-ghost{color:var(--fg); background:var(--card); border:1px solid var(--line2)}
+  .btn-ghost:hover{transform:translateY(-2px); border-color:#3a3a46; text-decoration:none}
+
+  /* sections */
+  section{padding:34px 0}
+  .eyebrow{font-size:12px; letter-spacing:.10em; text-transform:uppercase; color:var(--mut); margin:0 0 6px}
+  h2{font-size:clamp(22px,3.2vw,28px); letter-spacing:-.02em; margin:0 0 22px}
+
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  @media(max-width:720px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px}
+  .card .n{font-size:12px; font-weight:700; color:var(--tt); letter-spacing:.06em; margin-bottom:10px}
+  .card h3{font-size:17px; margin:0 0 8px; letter-spacing:-.01em}
+  .card p{margin:0; color:var(--mut2); font-size:14.5px}
+
+  /* scopes */
+  .scopes{list-style:none; padding:0; margin:0; display:grid; gap:12px}
+  .scopes li{display:flex; gap:14px; align-items:flex-start; background:var(--card);
+    border:1px solid var(--line); border-radius:14px; padding:16px 18px}
+  .scopes code{font:600 13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--tt);
+    background:rgba(37,244,238,.08); border:1px solid rgba(37,244,238,.18);
+    padding:2px 8px; border-radius:7px; white-space:nowrap; margin-top:1px}
+  .scopes .x{color:var(--mut2); font-size:14.5px}
+  .scopes .x b{color:var(--fg)}
+
+  .note{background:linear-gradient(180deg,rgba(37,244,238,.05),rgba(254,44,85,.05));
+    border:1px solid var(--line2); border-radius:16px; padding:20px 22px; color:var(--mut2); font-size:14.5px}
+  .note b{color:var(--fg)}
+
+  /* footer */
+  footer{border-top:1px solid var(--line); margin-top:24px; padding:28px 0 56px; color:var(--mut); font-size:13.5px}
+  .frow{display:flex; flex-wrap:wrap; gap:18px 26px; align-items:center; justify-content:space-between}
+  footer nav{display:flex; gap:22px; flex-wrap:wrap}
+  footer a{color:var(--mut2)}
+
+  /* motion */
+  .rise{opacity:0; transform:translateY(14px); animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1; transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .rise{animation:none; opacity:1; transform:none}
+    .btn{transition:none}
+    .btn:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<main class="wrap">
+
+  <header>
+    <div class="brand"><img src="app_icon.png" alt="AnimeArenaHQ logo"> AnimeArenaHQ</div>
+    <nav class="top">
+      <a href="#how">How it works</a>
+      <a href="#scopes">Permissions</a>
+      <a href="demo.html">Live demo</a>
+    </nav>
+  </header>
+
+  <section class="hero rise">
+    <span class="kicker"><span class="dot"></span> TikTok Content Posting API integration</span>
+    <h1>We make anime matchup videos —<br><span class="g">and publish them ourselves.</span></h1>
+    <p class="lede">AnimeArenaHQ is a faceless anime commentary brand. Our in-house publisher posts the
+      "who would win" Shorts we produce straight to our own authorized TikTok account
+      <b style="color:var(--fg)">@animearena65</b> — no third parties, no other users' data.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="demo.html">▶ See the integration demo</a>
+      <a class="btn btn-ghost" href="#how">How it works</a>
+    </div>
+  </section>
+
+  <section id="how" class="rise" style="animation-delay:.06s">
+    <p class="eyebrow">The flow</p>
+    <h2>Three steps, one account — ours.</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="n">01 · LOGIN KIT</div>
+        <h3>The owner signs in</h3>
+        <p>The account owner authorizes AnimeArenaHQ through TikTok OAuth. We confirm which account
+          we're connected to — nothing more.</p>
+      </div>
+      <div class="card">
+        <div class="n">02 · CONTENT POSTING API</div>
+        <h3>We upload our video</h3>
+        <p>A finished vertical video we produced is sent to TikTok with <code style="font-size:12px">push_by_file</code>
+          (FILE_UPLOAD) — direct post or draft.</p>
+      </div>
+      <div class="card">
+        <div class="n">03 · PUBLISHED</div>
+        <h3>It lands on our profile</h3>
+        <p>The post completes on <b style="color:#fff">@animearena65</b>. We read back only the publish
+          status of the video we just posted.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="scopes" class="rise" style="animation-delay:.12s">
+    <p class="eyebrow">Least privilege</p>
+    <h2>The permissions we request, and why.</h2>
+    <ul class="scopes">
+      <li>
+        <code>user.info.basic</code>
+        <span class="x"><b>Confirm the authorized account.</b> We read the connected account's open id,
+          display name, and avatar so we know we're publishing to the right profile.</span>
+      </li>
+      <li>
+        <code>video.publish</code>
+        <span class="x"><b>Direct-post our finished videos.</b> Publishes a completed video we created
+          straight to our own TikTok profile.</span>
+      </li>
+      <li>
+        <code>video.upload</code>
+        <span class="x"><b>Send drafts.</b> Uploads a video as a draft to our own account so it can be
+          reviewed before going live.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="rise" style="animation-delay:.16s">
+    <div class="note">
+      <b>Scope of use.</b> This is a first-party tool. It publishes only videos AnimeArenaHQ produces,
+      only to our own authorized TikTok account. We do not post on behalf of anyone else, and we do not
+      collect, store, or process the personal data of viewers or other TikTok users. Referenced anime
+      characters and franchises remain the property of their rights holders; our videos are commentary
+      and analysis.
+    </div>
+  </section>
+
+  <footer>
+    <div class="frow">
+      <div>© 2026 AnimeArenaHQ · <a href="mailto:GoldGoldFruit21@gmail.com">GoldGoldFruit21@gmail.com</a></div>
+      <nav>
+        <a href="demo.html">Demo</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="tos.html">Terms of Service</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+</body>
+</html>
